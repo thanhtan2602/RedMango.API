@@ -1,0 +1,17 @@
+﻿using System.Net;
+
+namespace RedMango.API.Models
+{
+    public class ApiResponse
+    {
+        public ApiResponse()
+        {
+            ErrorMessages = new List<string>();
+            IsSuccess = true;
+        }
+        public HttpStatusCode StatusCode { get; set; }
+        public bool IsSuccess { get; set; }
+        public List<string> ErrorMessages { get; set; }
+        public object Result { get; set; }
+    }
+}
