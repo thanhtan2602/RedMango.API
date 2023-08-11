@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RedMango.API.Data;
 
@@ -11,9 +12,11 @@ using RedMango.API.Data;
 namespace RedMango.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230811163530_addOrd")]
+    partial class addOrd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -409,8 +412,6 @@ namespace RedMango.API.Migrations
 
                     b.HasKey("OrderDetailId");
 
-                    b.HasIndex("MenuItemId");
-
                     b.HasIndex("OrderHeaderId");
 
                     b.ToTable("OrderDetails");
@@ -547,19 +548,11 @@ namespace RedMango.API.Migrations
 
             modelBuilder.Entity("RedMango.API.Models.OrderDetail", b =>
                 {
-                    b.HasOne("RedMango.API.Models.MenuItem", "MenuItem")
-                        .WithMany()
-                        .HasForeignKey("MenuItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("RedMango.API.Models.OrderHeader", null)
                         .WithMany("OrderDetails")
                         .HasForeignKey("OrderHeaderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("MenuItem");
                 });
 
             modelBuilder.Entity("RedMango.API.Models.OrderHeader", b =>
