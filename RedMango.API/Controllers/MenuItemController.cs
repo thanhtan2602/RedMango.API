@@ -26,7 +26,7 @@ namespace RedMango.API.Controllers
         {
             _response.Result = _db.MenuItems;
             _response.StatusCode = HttpStatusCode.OK;
-            return Ok(_db.MenuItems);
+            return Ok(_response);
         }
 
         [HttpGet("{menuId:int}", Name = "GetMenuItem")]

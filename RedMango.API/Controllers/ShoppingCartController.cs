@@ -19,10 +19,13 @@ namespace RedMango.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse>> AddOrUpdateItemInCart(string userId, int menuItemId, int updateQualityBy)
+        public async Task<ActionResult<ApiResponse>> AddOrUpdateItemInCart(string userId, int menuItemId, int updateQuantityBy)
         {
-            //logic
-            //
+            // Shopping cart will have one entry per user id, even if a user has many items in cart
+            // Cart items will have all the items in shopping cart for a user
+            // updatequantityby will have count by with an items quantity needs to be updated
+            // if it is -1 that means we have lower a count if it is 5 it means we have to add 5 count to existing count
+            // if updatequantityby by is 0, item will be removed
 
             ShoppingCart shoppingCart = _db.ShoppingCarts.FirstOrDefault(x => x.UserId == userId);
             MenuItem menuItem = _db.MenuItems.FirstOrDefault(x => x.Id == menuItemId);
@@ -32,7 +35,7 @@ namespace RedMango.API.Controllers
                 _response.IsSuccess = false;
                 return BadRequest(_response);
             }
-            if (shoppingCart == null && updateQualityBy > 0)
+            if (shoppingCart == null && updateQuantityBy > 0)
             {
                 //create a shopping cart & add cart item
                 ShoppingCart newCart = new ShoppingCart
@@ -45,13 +48,46 @@ namespace RedMango.API.Controllers
                 CartItem newCartItem = new CartItem
                 {
                     MenuItemId = menuItemId,
-                    Quantity = updateQualityBy,
+                    Quantity = updateQuantityBy,
                     ShoppingCartId = newCart.Id,
                     MenuItem = null
                 };
                 _db.CartItems.Add(newCartItem);
                 _db.SaveChanges();
             }
+            else if (shoppingCart != null)
+            {
+                //check exist
+                CartItem existCartItem = _db.CartItems.FirstOrDefault(x => x.ShoppingCartId == shoppingCart.Id && x.MenuItemId == menuItemId);
+
+                if (existCartItem == null && updateQuantityBy > 0)
+                {
+                    CartItem newCartItem = new CartItem
+                    {
+                        MenuItemId = menuItemId,
+                        Quantity = updateQuantityBy,
+                        ShoppingCartId = shoppingCart.Id,
+                        MenuItem = null
+                    };
+                    _db.CartItems.Add(newCartItem);
+                    _db.SaveChanges();
+                }
+                else
+                {
+                    if(updateQuantityBy > 0)
+                    {
+                        existCartItem.Quantity += updateQuantityBy;
+                        _db.CartItems.Update(existCartItem);
+                        _db.SaveChanges();
+                    }
+                    else
+                    {
+                        _db.CartItems.Remove(existCartItem);
+                        _db.SaveChanges();
+                    }
+                }
+            }
+
             return _response;
         }
 
@@ -72,7 +108,7 @@ namespace RedMango.API.Controllers
                     .FirstOrDefault(x => x.UserId == userId);
                 }
 
-                if (shoppingCart.CartItems?.Count > 0)
+                if (shoppingCart?.CartItems?.Count > 0)
                 {
                     shoppingCart.CartTotal = shoppingCart.CartItems.Sum(x => x.Quantity * x.MenuItem.Price);
                 }

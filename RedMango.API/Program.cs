@@ -33,22 +33,22 @@ builder.Services.Configure<IdentityOptions>(options =>
 });
 
 var key = builder.Configuration.GetValue<string>("AppSettings:Secret");
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(u =>
-{
-    u.RequireHttpsMetadata = false;
-    u.SaveToken = true;
-    u.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
-        ValidateIssuer = false,
-        ValidateAudience = false,
-    };
-});
+//builder.Services.AddAuthentication(options =>
+//{
+//    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+//}).AddJwtBearer(u =>
+//{
+//    u.RequireHttpsMetadata = false;
+//    u.SaveToken = true;
+//    u.TokenValidationParameters = new TokenValidationParameters
+//    {
+//        ValidateIssuerSigningKey = true,
+//        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
+//        ValidateIssuer = false,
+//        ValidateAudience = false,
+//    };
+//});
 
 builder.Services.AddCors();
 
