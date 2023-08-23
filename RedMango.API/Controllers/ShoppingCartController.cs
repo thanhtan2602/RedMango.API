@@ -74,15 +74,15 @@ namespace RedMango.API.Controllers
                 }
                 else
                 {
-                    if(updateQuantityBy > 0)
+                    if((existCartItem.Quantity + updateQuantityBy == 0) || updateQuantityBy == 0)
                     {
-                        existCartItem.Quantity += updateQuantityBy;
-                        _db.CartItems.Update(existCartItem);
+                        _db.CartItems.Remove(existCartItem);
                         _db.SaveChanges();
                     }
                     else
                     {
-                        _db.CartItems.Remove(existCartItem);
+                        existCartItem.Quantity += updateQuantityBy;
+                        _db.CartItems.Update(existCartItem);
                         _db.SaveChanges();
                     }
                 }
